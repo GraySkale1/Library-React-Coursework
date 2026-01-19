@@ -1,8 +1,6 @@
 # Actively Working on
 - Inventory of books
 - Basic login system
-- Routing
-
 
 # Overall Plan
 
@@ -30,3 +28,7 @@ Each role needs it's own logging file with:
 - [ ] User ID
 - [ ] Action taken
 - [ ] Was action successful?
+
+## Optional
+- [ ] Dockerise app
+- [ ] Routing
