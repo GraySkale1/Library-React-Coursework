@@ -1,13 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 
 app = Flask(__name__)
 CORS(app)
 
+app.config["JWT_SECRET_KEY"] = "AkajnAJ&576N42@@2r22"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+jwt = JWTManager(app)
+
 # User storage
 users = {"test@example.com":
     {
+        "id": "1",
         "password_hash": generate_password_hash("password123"),
         "name": "Test User"
     }
@@ -33,9 +40,33 @@ def login_or_register():
         return jsonify({"error": "Invalid credentials"}), 401
 
     return jsonify({
-        "message": "Login successful",
-        "user": {"email": email}
+        "message": "Welcome {0}".format(users.get(email).get("name")),
+        "access_token": create_access_token(identity=email)
     }), 200
+
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response
+
+@app.route("/api/profile/info", methods=["GET"])
+@jwt_required()
+def get_user_data():
+    identity = get_jwt_identity()
+
+    if not isinstance(identity, str):
+        return jsonify({"error": "Invalid token identity"}), 400
+
+    data = users.get(identity).get("name")
+
+    if data is None:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify(data), 200
+
+
 
 
 if __name__ == "__main__":

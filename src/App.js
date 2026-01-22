@@ -1,14 +1,25 @@
 import './App.css';
+import Profile from './Profile';
 import Login from './Login';
-import Register from './Registerpage';
+import { BrowserRouter, Routes, Route, Link} from 'react-router-dom';
+//import Register from './Registerpage';
+
+
 
 function App() {
-  localStorage.clear()
+
   return (
-    <>
-    <Login/>
-    <Register/>
-    </>
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Home</Link> |{" "}
+        <Link to="/login">Login</Link> |{" "}
+      </nav>
+      <Routes>
+        <Route path="/" element={<Profile />}  />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+
   );
 }
 

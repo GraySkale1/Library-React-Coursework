@@ -26,6 +26,7 @@ function Login() {
 
             const result = await response.json();
             setMessage(result.message);
+            sessionStorage.setItem("session_token", result.access_token)
             console.log(result);
         } catch (error) {
             setMessage('Error posting data');
@@ -36,28 +37,28 @@ function Login() {
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='App'>
         <label>
-          email:
           <input 
             type="text" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
+            placeholder='Email'
           />
         </label>
         <br />
         <label>
-          password:
           <input 
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
+            placeholder='Password'
           />
         </label>
         <br />
+        {message && <p>{message}</p>}
         <button type="submit">Submit</button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 }
