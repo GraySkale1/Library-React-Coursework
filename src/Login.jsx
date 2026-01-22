@@ -1,50 +1,65 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from 'react';
 import "./Login.css";
 
 function Login() {
-    const { // Initalises form
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
-    const onSubmit = (data) => {
-        const userData = JSON.parse(localStorage.getItem(data.username)); // gets username and password from local storage
-        if (userData) {
-            if (userData.password === data.password) {
-                alert(userData.username + " You Are Successfully Logged In");
-            } else {
-                alert("Username or Password is not matching with our record");
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const data = { email, password };
+
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+            throw new Error('Something went wrong');
             }
-        } else {
-            alert("Username or Password is not matching with our record");
+
+            const result = await response.json();
+            setMessage(result.message);
+            console.log(result);
+        } catch (error) {
+            setMessage('Error posting data');
+            console.error('Error:', error);
         }
     };
 
-    return (
-        <>
-            <h2>Login Form</h2>
-
-            <form className="App" onSubmit={handleSubmit(onSubmit)}>
-                <input
-                    type="username"
-                    {...register("username", { required: true })}
-                    placeholder="Username"
-                />
-                {errors.username && <span style={{ color: "red" }}>*Username* is mandatory</span>}
-
-                <input
-                    type="password"
-                    {...register("password", { required: true })}
-                    placeholder="Password"
-                />
-                {errors.password && <span style={{ color: "red" }}>*Password* is mandatory</span>}
-
-                <input type="submit" style={{ backgroundColor: "#a1eafb" }} />
-            </form>
-        </>
-    );
+  return (
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          email:
+          <input 
+            type="text" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+          />
+        </label>
+        <br />
+        <label>
+          password:
+          <input 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+      {message && <p>{message}</p>}
+    </div>
+  );
 }
 
 export default Login;

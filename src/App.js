@@ -4,7 +4,6 @@ import Register from './Registerpage';
 
 function App() {
   localStorage.clear()
-  localStorage.setItem("username")
   return (
     <>
     <Login/>

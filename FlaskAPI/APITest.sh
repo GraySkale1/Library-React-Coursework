@@ -1,1 +1,1 @@
-curl -X POST -H "Content-Type: application/json" -d '{"username": "admin2"}' http://127.0.0.1:5000/login\`
+curl -X POST -H "Content-Type: application/json" -d '{"email": "test@example.com", "password": "password123"}' http://127.0.0.1:5000/api/login
