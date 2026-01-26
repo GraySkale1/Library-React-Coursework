@@ -51,6 +51,7 @@ function Logout() {
         return <p>Logging out</p>;
     }
 
+    sessionStorage.removeItem("session_token");
     return (
         <Navigate to="/login"/>
     );

@@ -5,12 +5,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 import pandas as pd
 
+
 app = Flask(__name__)
 CORS(app)
 
 app.config["JWT_SECRET_KEY"] = "AkajnAJ&576N42@@2r22"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
+
+df = pd.read_csv('FlaskAPI/books.csv')
 
 # User storage
 users = {"test@example.com":
@@ -72,15 +75,17 @@ def get_user_data():
     return jsonify(name=users.get(identity).get("name"), acc_type=users.get(identity).get("type")), 200
 
 
-@app.route("/api/library/query", methods=["POST"])
+@app.route("/api/library/query", methods=["GET"])
 @jwt_required()
 def query_books():
-    query = request.get_json().get("query")
+    name = request.args.get("name")
     
-    if not data:
+    if not name:
         return jsonify({"error": "Invalid JSON"}), 400
 
-    
+    filtered = filtered = df[df["title"].str.contains(name, case=False, na=False)]
+
+    return jsonify(filtered.to_dict(orient="records"))
 
 
 
