@@ -24,7 +24,7 @@ async function authenticatedRequest(path) {
     return result;
 }
 
-function Profile() {
+function Logout() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ function Profile() {
     useEffect(() => {
         async function loadProfile() {
             try {
-                const result = await authenticatedRequest('api/profile/info');
+                const result = await authenticatedRequest('api/logout');
                 setData(result);
             } catch (err) {
                 setError(err.message);
@@ -46,21 +46,14 @@ function Profile() {
         loadProfile();
     }, []);
 
-    if (!token) {
-        return (<Navigate to="/login"/>);
-    }
 
     if (loading) {
-        return <p>Loading profile...</p>;
-    }
-
-    if (error) {
-        return <p>Error: {error}</p>;
+        return <p>Logging out</p>;
     }
 
     return (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <Navigate to="/login"/>
     );
 }
 
-export default Profile;
+export default Logout;

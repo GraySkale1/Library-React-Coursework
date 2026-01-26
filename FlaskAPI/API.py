@@ -3,6 +3,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
@@ -16,16 +17,18 @@ users = {"test@example.com":
     {
         "id": "1",
         "password_hash": generate_password_hash("password123"),
-        "name": "Test User"
+        "name": "Test User",
+        "type": "Student"
     }
 }
 
 @app.route("/api/login", methods=["POST"])
-def login_or_register():
+def login():
     data = request.get_json()
 
     if not data:
         return jsonify({"error": "Invalid JSON"}), 400
+
 
     email = data.get("email")
     password = data.get("password")
@@ -34,10 +37,11 @@ def login_or_register():
         return jsonify({"error": "Missing required fields"}), 400
 
     # LOGIN
-    stored_password = users.get(email).get("password_hash")
-
-    if not stored_password or not check_password_hash(stored_password, password):
+    try:
+        stored_password = users.get(email).get("password_hash")
+    except:
         return jsonify({"error": "Invalid credentials"}), 401
+
 
     return jsonify({
         "message": "Welcome {0}".format(users.get(email).get("name")),
@@ -46,6 +50,7 @@ def login_or_register():
 
 
 @app.route("/api/logout", methods=["POST"])
+@jwt_required()
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
@@ -64,8 +69,18 @@ def get_user_data():
     if data is None:
         return jsonify({"error": "User not found"}), 404
 
-    return jsonify(data), 200
+    return jsonify(name=users.get(identity).get("name"), acc_type=users.get(identity).get("type")), 200
 
+
+@app.route("/api/library/query", methods=["POST"])
+@jwt_required()
+def query_books():
+    query = request.get_json().get("query")
+    
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    
 
 
 

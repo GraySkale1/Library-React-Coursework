@@ -25,7 +25,7 @@ function Login() {
             }
 
             const result = await response.json();
-            setMessage(result.message);
+            setMessage('Logged in');
             sessionStorage.setItem("session_token", result.access_token)
             console.log(result);
         } catch (error) {
